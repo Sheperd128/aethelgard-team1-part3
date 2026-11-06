@@ -17,7 +17,8 @@
         #final-reveal { display: none; margin-top: 2rem; text-align: left; }
         .log-box { background: var(--log-bg); padding: 1.5rem; border-radius: 4px; border-left: 4px solid #a855f7; color: #cbd5e1; font-family: 'Courier New', Courier, monospace; margin-bottom: 2rem; font-size: 0.95rem; }
         
-        .team-lock { background: var(--accent); color: white; padding: 1.5rem; text-align: center; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .team-lock { background: var(--accent); color: white; padding: 1.5rem; text-align: center; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; display: block; transition: 0.3s; cursor: pointer; }
+        .team-lock:hover { background: #1d4ed8; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -49,10 +50,11 @@
                 <p>"But something is wrong. I saw the security footage before the blackout. Makima was terrified. She was following orders. Why would the most dangerous woman in the company submit to the loudest idiot in the room? Someone else gave them the leverage. Someone in the shadows is playing the board."</p>
             </div>
 
-            <div class="team-lock">
-                TEAM 1 INVESTIGATION COMPLETE. NODE LOCKED.<br><br>
-                PLEASE AWAIT FINDINGS FROM TEAMS 2 AND 3 TO IDENTIFY THE MASTERMIND.
-            </div>
+            <!-- This now acts as a direct, styled link moving them to Website 4 -->
+            <a href="https://aethelgard-team1-part4.vercel.app/" class="team-lock">
+                TEAM 1 INVESTIGATION COMPLETE.<br>
+                CLICK HERE TO ACCESS WEBSITE 4 (R&D VAULT) &rarr;
+            </a>
         </div>
     </div>
 

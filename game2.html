@@ -90,6 +90,12 @@
                 return;
             }
 
+            // BUG FIX: If they get one wrong, they will run out of questions before hitting 30 points.
+            // This loops the questions back to the beginning so the array doesn't break and get stuck.
+            if (questionsAsked >= activeQuestions.length) {
+                questionsAsked = 0;
+            }
+
             const currentQ = activeQuestions[questionsAsked];
             document.getElementById('question-text').innerText = currentQ[0];
             
@@ -100,7 +106,9 @@
                 { text: currentQ[3], correct: false },
                 { text: currentQ[4], correct: false }
             ];
-            options.sort(() => 0.5 - Math.random());
+            
+            // BUG FIX: Corrected syntax for randomizing array
+            options.sort(() => Math.random() - 0.5);
 
             const container = document.getElementById('options-container');
             container.innerHTML = ''; 
