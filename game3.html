@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aethelgard Offshore | Biometrics</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .memory-game { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 500px; margin: 2rem auto; perspective: 1000px; }
+        
+        .memory-card { width: 100%; aspect-ratio: 1; position: relative; transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; }
+        .memory-card.flip { transform: rotateY(180deg); }
+        
+        .front-face, .back-face { width: 100%; height: 100%; position: absolute; border-radius: 8px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        .back-face { background: var(--bg-main); background-image: radial-gradient(var(--border-color) 1px, transparent 1px); background-size: 10px 10px; color: transparent; }
+        .front-face { background: white; transform: rotateY(180deg); background-color: #e0e7ff; }
+
+        .stats { display: flex; justify-content: space-between; max-width: 500px; margin: 0 auto; font-weight: bold; color: var(--text-muted); }
+        
+        #proceed-btn { display: none; margin-top: 2rem; text-decoration: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>FIREWALL 4: BIOMETRIC CLEARANCE</h2>
+        
+        <p style="text-align: center; margin-bottom: 1rem;">WARNING: Legal Department WIPE PROTOCOL detected. Re-establish executive neural links to halt the deletion.</p>
+        
+        <div class="stats">
+            <div>MATCHES: <span id="matches" style="color: var(--accent);">0</span> / 8</div>
+            <div>MOVES: <span id="moves">0</span></div>
+        </div>
+
+        <div class="memory-game" id="memory-board">
+            <!-- Cards injected via JS -->
+        </div>
+
+        <a id="proceed-btn" class="btn-primary" href="puzzle3.html">BIOMETRICS ACCEPTED. PROCEED TO FINAL NODE.</a>
+    </div>
+
+    <script>
+        const cardsArray = ['💼', '🗡️', '🍷', '👁️', '⚖️', '🦊', '🍎', '📂'];
+        let gameGrid = cardsArray.concat(cardsArray).sort(() => 0.5 - Math.random());
+        
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let matches = 0;
+        let moves = 0;
+
+        const board = document.getElementById('memory-board');
+
+        gameGrid.forEach((icon) => {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('memory-card');
+            cardElement.dataset.icon = icon;
+
+            cardElement.innerHTML = `
+                <div class="front-face">${icon}</div>
+                <div class="back-face"></div>
+            `;
+            
+            cardElement.addEventListener('click', flipCard);
+            board.appendChild(cardElement);
+        });
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flip');
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            moves++;
+            document.getElementById('moves').innerText = moves;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.icon === secondCard.dataset.icon;
+
+            if (isMatch) {
+                disableCards();
+                matches++;
+                document.getElementById('matches').innerText = matches;
+                if (matches === 8) {
+                    setTimeout(() => {
+                        document.getElementById('proceed-btn').style.display = 'block';
+                    }, 500);
+                }
+            } else {
+                unflipCards();
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            setTimeout(() => {
+                firstCard.classList.remove('flip');
+                secondCard.classList.remove('flip');
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [firstCard, secondCard, lockBoard] = [null, null, false];
+        }
+    </script>
+</body>
+</html>

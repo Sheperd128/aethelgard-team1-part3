@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aethelgard Offshore | Final Node</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .console { background: #000; border: 2px solid var(--accent); padding: 3rem; border-radius: 8px; text-align: center; }
+        .console h3 { color: var(--accent); letter-spacing: 2px; margin-bottom: 1rem; }
+        
+        .time-input { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 2rem 0; }
+        .time-input input { width: 80px; font-size: 2.5rem; text-align: center; background: #020817; color: white; border: 1px solid var(--text-muted); border-radius: 4px; padding: 10px; font-family: monospace; }
+        .time-input span { font-size: 2.5rem; color: var(--accent); font-weight: bold; }
+        .time-input input:focus { outline: none; border-color: var(--accent); }
+
+        #final-reveal { display: none; margin-top: 2rem; text-align: left; }
+        .log-box { background: var(--log-bg); padding: 1.5rem; border-radius: 4px; border-left: 4px solid #a855f7; color: #cbd5e1; font-family: 'Courier New', Courier, monospace; margin-bottom: 2rem; font-size: 0.95rem; }
+        
+        .team-lock { background: var(--accent); color: white; padding: 1.5rem; text-align: center; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>ROOT ACCESS: SECURITY ARCHIVE</h2>
+        
+        <div class="console" id="console-area">
+            <h3>VERIFY TIMELINE SYNCHRONIZATION</h3>
+            <p style="color: #94a3b8; font-size: 0.9rem;">To access the final encrypted security log, you must verify you were present on the estate. Enter the exact time the primary power grid was sabotaged.</p>
+            
+            <div class="time-input">
+                <input type="text" id="hour" maxlength="2" placeholder="HH">
+                <span>:</span>
+                <input type="text" id="minute" maxlength="2" placeholder="MM">
+            </div>
+            
+            <button class="btn-primary" onclick="checkTime()">DECRYPT SECURITY LOG</button>
+            <div class="error-msg" id="time-error">TIMESTAMP REJECTED. YOU WERE NOT THERE.</div>
+        </div>
+
+        <div id="final-reveal">
+            <h3 style="color: var(--text-main); margin-bottom: 1rem;">DECRYPTION SUCCESSFUL. FILE RECOVERED.</h3>
+            
+            <div class="log-box">
+                <p style="color: #a855f7; margin-bottom: 10px; font-weight: bold;">USER: L. YAGAMI (HEAD OF LEGAL)</p>
+                <p>"I have wiped the local servers. Richard's legacy of corruption is ashes. The files scattered to the offshore nodes, but it won't matter. He is dead."</p>
+                <br>
+                <p>"But something is wrong. I saw the security footage before the blackout. Makima was terrified. She was following orders. Why would the most dangerous woman in the company submit to the loudest idiot in the room? Someone else gave them the leverage. Someone in the shadows is playing the board."</p>
+            </div>
+
+            <div class="team-lock">
+                TEAM 1 INVESTIGATION COMPLETE. NODE LOCKED.<br><br>
+                PLEASE AWAIT FINDINGS FROM TEAMS 2 AND 3 TO IDENTIFY THE MASTERMIND.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkTime() {
+            const h = document.getElementById('hour').value;
+            const m = document.getElementById('minute').value;
+            
+            // The blackout happened at 11:15 PM
+            if (h === "11" && m === "15") {
+                document.getElementById('console-area').style.display = 'none';
+                document.getElementById('final-reveal').style.display = 'block';
+            } else {
+                document.getElementById('time-error').style.display = 'block';
+                setTimeout(() => document.getElementById('time-error').style.display = 'none', 2000);
+            }
+        }
+    </script>
+</body>
+</html>

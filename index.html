@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aethelgard Offshore | Secure Node</title>
+    <style>
+        :root {
+            --bg-main: #020817;
+            --bg-card: #0f172a;
+            --accent: #10b981; /* Emerald hacker green */
+            --accent-dim: #064e3b;
+            --text-main: #f8fafc;
+            --wordle-green: #10b981;
+            --wordle-yellow: #eab308;
+            --wordle-gray: #334155;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
+        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+        
+        /* Containers */
+        .view-section { display: none; padding: 2rem; max-width: 800px; margin: 0 auto; animation: fadeIn 0.5s; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* The Homepage EULA */
+        #homepage { border: 1px solid var(--accent); margin-top: 2rem; background: #000; padding: 2rem; border-radius: 4px; height: 80vh; overflow-y: scroll; }
+        #homepage h1 { color: var(--accent); text-align: center; border-bottom: 1px solid var(--accent); padding-bottom: 1rem; margin-bottom: 1rem; }
+        #homepage p { margin-bottom: 1.5rem; font-size: 0.9rem; color: #94a3b8; }
+        .secret-link { color: #94a3b8; text-decoration: none; cursor: pointer; transition: 0.3s; }
+        .secret-link:hover { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+
+        /* Game 1: Wordle */
+        .game-header { text-align: center; margin-bottom: 2rem; color: var(--accent); }
+        #wordle-board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 5px; max-width: 300px; margin: 0 auto 2rem; }
+        .wordle-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .wordle-tile { width: 100%; aspect-ratio: 1; border: 2px solid var(--accent-dim); display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; text-transform: uppercase; }
+        
+        .virtual-keyboard { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 5px; }
+        .key-row { display: flex; justify-content: center; gap: 5px; }
+        .key { padding: 15px 10px; background: var(--bg-card); color: white; border: 1px solid var(--accent-dim); border-radius: 4px; cursor: pointer; font-weight: bold; flex: 1; text-align: center; user-select: none; }
+        .key:hover { background: var(--accent-dim); }
+        .key.wide { flex: 1.5; }
+        
+        /* Status Colors */
+        .correct { background-color: var(--wordle-green) !important; border-color: var(--wordle-green) !important; color: black; }
+        .present { background-color: var(--wordle-yellow) !important; border-color: var(--wordle-yellow) !important; color: black; }
+        .absent { background-color: var(--wordle-gray) !important; border-color: var(--wordle-gray) !important; }
+
+        .next-btn { display: none; width: 100%; padding: 1rem; background: var(--accent); color: black; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 2rem; border-radius: 4px; }
+        .next-btn:hover { background: #059669; }
+    </style>
+</head>
+<body>
+
+    <!-- HOMEPAGE: The Hidden Link -->
+    <div id="homepage" class="view-section active">
+        <h1>AETHELGARD OFFSHORE SERVER EULA</h1>
+        <p><strong>SECTION 1: TERMS OF ACCESS</strong><br>Access to this server is strictly restricted to Aethelgard Industries Level 5 Executive personnel. Unauthorized access attempts will be logged and reported to the global authorities. By continuing to scroll, you acknowledge that your IP address, MAC address, and physical geolocation are currently being monitored.</p>
+        
+        <p><strong>SECTION 2: DATA ENCRYPTION AND LIABILITY</strong><br>All files contained within this offshore node are protected under the Aegis Protocol. Aethelgard Industries assumes no liability for neurological damage, psychological distress, or financial ruin incurred by unauthorized decryption attempts. The data is final. The truth is absolute.</p>
+        
+        <p><strong>SECTION 3: THE CONSEQUENCES OF CURIOSITY</strong><br>There is a reason the CEO hid these files in the dark. Some ledgers should not be balanced. Some doors should remain locked. You are currently trespassing in the digital graveyard of Aethelgard's enemies.</p>
+
+        <p><strong>SECTION 4: ACKNOWLEDGMENT</strong><br>To acknowledge these terms, you must <span class="secret-link" onclick="loadStage('game1')">Proceed</span> with absolute caution. Failure to adhere to the aforementioned security protocols will result in immediate termination of the connection and dispatch of physical security teams to your location.</p>
+        
+        <p><strong>SECTION 5: ARBITRATION</strong><br>Any disputes arising from the access of this data will be settled in private arbitration outside of federal jurisdiction. Aethelgard retains the right to employ extreme prejudice in the defense of its corporate secrets.</p>
+        <p><br><br><br>EOF.</p>
+    </div>
+
+    <!-- GAME 1: TERMINAL WORDLE -->
+    <div id="game1" class="view-section">
+        <div class="game-header">
+            <h2>DECRYPTION PROTOCOL 1: INFILTRATION</h2>
+            <p style="font-size: 0.9rem; color: #94a3b8;">Guess the 5-letter secure payload to unlock the next layer. You have 6 attempts.</p>
+        </div>
+        
+        <div id="wordle-board">
+            <!-- 6 Rows, 5 Columns -->
+            <div class="wordle-row" id="row-0"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-1"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-2"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-3"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-4"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-5"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+        </div>
+
+        <div class="virtual-keyboard" id="keyboard">
+            <div class="key-row">
+                <div class="key" onclick="handleKey('Q')">Q</div><div class="key" onclick="handleKey('W')">W</div><div class="key" onclick="handleKey('E')">E</div><div class="key" onclick="handleKey('R')">R</div><div class="key" onclick="handleKey('T')">T</div><div class="key" onclick="handleKey('Y')">Y</div><div class="key" onclick="handleKey('U')">U</div><div class="key" onclick="handleKey('I')">I</div><div class="key" onclick="handleKey('O')">O</div><div class="key" onclick="handleKey('P')">P</div>
+            </div>
+            <div class="key-row">
+                <div class="key" onclick="handleKey('A')">A</div><div class="key" onclick="handleKey('S')">S</div><div class="key" onclick="handleKey('D')">D</div><div class="key" onclick="handleKey('F')">F</div><div class="key" onclick="handleKey('G')">G</div><div class="key" onclick="handleKey('H')">H</div><div class="key" onclick="handleKey('J')">J</div><div class="key" onclick="handleKey('K')">K</div><div class="key" onclick="handleKey('L')">L</div>
+            </div>
+            <div class="key-row">
+                <div class="key wide" onclick="handleKey('ENTER')">ENTER</div><div class="key" onclick="handleKey('Z')">Z</div><div class="key" onclick="handleKey('X')">X</div><div class="key" onclick="handleKey('C')">C</div><div class="key" onclick="handleKey('V')">V</div><div class="key" onclick="handleKey('B')">B</div><div class="key" onclick="handleKey('N')">N</div><div class="key" onclick="handleKey('M')">M</div><div class="key wide" onclick="handleKey('BACKSPACE')">DEL</div>
+            </div>
+        </div>
+
+        <button id="btn-to-puzzle1" class="next-btn" onclick="loadStage('puzzle1')">PROCEED TO PUZZLE 1</button>
+    </div>
+
+    <!-- PUZZLE 1 CONTAINER (For next batch) -->
+    <div id="puzzle1" class="view-section">
+        <h2 style="color: var(--accent); text-align: center;">PUZZLE 1: INITIALIZING...</h2>
+    </div>
+
+    <script>
+        // --- NAVIGATION LOGIC ---
+        function loadStage(stageId) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(stageId).classList.add('active');
+        }
+
+        // --- GAME 1: WORDLE LOGIC ---
+        const TARGET_WORD = "TOXIN";
+        const maxGuesses = 6;
+        let currentGuess = "";
+        let currentRow = 0;
+        let gameOver = false;
+
+        // Physical Keyboard Support
+        document.addEventListener("keydown", (e) => {
+            if (gameOver || document.getElementById('game1').classList.contains('active') === false) return;
+            let key = e.key.toUpperCase();
+            if (key === "ENTER" || key === "BACKSPACE" || /^[A-Z]$/.test(key)) {
+                handleKey(key);
+            }
+        });
+
+        function handleKey(key) {
+            if (gameOver) return;
+
+            if (key === "BACKSPACE" && currentGuess.length > 0) {
+                currentGuess = currentGuess.slice(0, -1);
+                updateGrid();
+            } else if (key === "ENTER" && currentGuess.length === 5) {
+                checkGuess();
+            } else if (currentGuess.length < 5 && /^[A-Z]$/.test(key) && key.length === 1) {
+                currentGuess += key;
+                updateGrid();
+            }
+        }
+
+        function updateGrid() {
+            const row = document.getElementById(`row-${currentRow}`);
+            const tiles = row.querySelectorAll('.wordle-tile');
+            for (let i = 0; i < 5; i++) {
+                tiles[i].innerText = currentGuess[i] || "";
+            }
+        }
+
+        function checkGuess() {
+            const row = document.getElementById(`row-${currentRow}`);
+            const tiles = row.querySelectorAll('.wordle-tile');
+            let guessArr = currentGuess.split("");
+            let targetArr = TARGET_WORD.split("");
+            
+            // First pass: Find correct letters (Green)
+            for (let i = 0; i < 5; i++) {
+                if (guessArr[i] === targetArr[i]) {
+                    tiles[i].classList.add("correct");
+                    targetArr[i] = null; // Mark as used
+                    guessArr[i] = null;
+                }
+            }
+            
+            // Second pass: Find present letters (Yellow) or absent (Gray)
+            for (let i = 0; i < 5; i++) {
+                if (guessArr[i] !== null) {
+                    let index = targetArr.indexOf(guessArr[i]);
+                    if (index !== -1) {
+                        tiles[i].classList.add("present");
+                        targetArr[index] = null; // Mark as used
+                    } else {
+                        tiles[i].classList.add("absent");
+                    }
+                }
+            }
+
+            if (currentGuess === TARGET_WORD) {
+                gameOver = true;
+                // Replace the old setTimeout in index.html with this:
+setTimeout(() => {
+    window.location.href = "puzzle1.html"; 
+}, 1500);
+            } else {
+                currentRow++;
+                currentGuess = "";
+                if (currentRow === maxGuesses) {
+                    gameOver = true;
+                    alert("ACCESS DENIED. REFRESH TO RESTART TERMINAL.");
+                }
+            }
+        }
+    </script>
+</body>
+</html>

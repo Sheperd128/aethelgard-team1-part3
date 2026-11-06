@@ -1,0 +1,30 @@
+:root {
+    /* Brighter Corporate Theme */
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --accent: #2563eb;       /* Corporate Blue */
+    --accent-hover: #1d4ed8;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --error: #ef4444;
+
+    /* Intercepted Log Colors (Preserved) */
+    --log-bg: #020817;
+    --speaker-a: #a855f7;    /* Purple */
+    --speaker-b: #eab308;    /* Yellow */
+    --log-highlight: #ffffff; /* This makes the bold text pop */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; align-items: center; padding: 2rem; }
+
+.container { max-width: 800px; width: 100%; background: var(--bg-card); padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+h2 { color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Global Button Styles */
+.btn-primary { width: 100%; padding: 1.2rem; background: var(--accent); color: white; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; border-radius: 4px; transition: background 0.2s; text-transform: uppercase; }
+.btn-primary:hover { background: var(--accent-hover); }
+
+/* Universal Error State */
+.error-msg { color: var(--error); margin-top: 10px; display: none; font-weight: bold; text-align: center; }
