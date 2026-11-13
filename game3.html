@@ -3,121 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aethelgard Offshore | Biometrics</title>
-    <link rel="stylesheet" href="global.css">
+    <title>Aethelgard Offshore | Firewall 4: Biometric Clearance</title>
     <style>
-        .memory-game { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 500px; margin: 2rem auto; perspective: 1000px; }
+        :root {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --error: #ef4444;
+            --success: #10b981;
+            
+            --log-bg: #020817;
+            --log-border: #1e293b;
+        }
         
-        .memory-card { width: 100%; aspect-ratio: 1; position: relative; transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; }
-        .memory-card.flip { transform: rotateY(180deg); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; min-height: 100vh; }
         
-        .front-face, .back-face { width: 100%; height: 100%; position: absolute; border-radius: 8px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container { max-width: 850px; width: 100%; background: var(--bg-card); padding: 3rem; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
         
-        .back-face { background: var(--bg-main); background-image: radial-gradient(var(--border-color) 1px, transparent 1px); background-size: 10px 10px; color: transparent; }
-        .front-face { background: white; transform: rotateY(180deg); background-color: #e0e7ff; }
+        h2 { color: var(--accent); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; font-size: 1.6rem; text-align: center; }
+        
+        /* Lore Box */
+        .lore-box { background: var(--log-bg); padding: 2rem; border-radius: 6px; margin-bottom: 2.5rem; font-family: 'Courier New', Courier, monospace; color: #cbd5e1; border-left: 4px solid var(--accent); box-shadow: inset 0 0 15px rgba(0,0,0,0.6); }
+        .lore-header { color: var(--accent); font-weight: bold; margin-bottom: 1rem; border-bottom: 1px dashed #334155; padding-bottom: 0.5rem; font-size: 0.95rem; letter-spacing: 1px; }
+        .lore-box p { font-size: 0.95rem; line-height: 1.8; text-align: justify; margin-bottom: 0.8rem; font-style: italic; }
+        .lore-meta { font-size: 0.8rem; color: #64748b; margin-top: 1rem; font-family: 'Segoe UI', sans-serif; }
 
-        .stats { display: flex; justify-content: space-between; max-width: 500px; margin: 0 auto; font-weight: bold; color: var(--text-muted); }
+        /* Puzzle Container */
+        .puzzle-container { background: #f8fafc; padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .puzzle-container h3 { color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
+        .puzzle-container p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; text-align: justify; }
+
+        /* Sequence Lock Interface */
+        .sequence-interface { max-width: 480px; margin: 0 auto; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         
-        #proceed-btn { display: none; margin-top: 2rem; text-decoration: none; text-align: center; }
+        .selected-slots { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5rem; min-height: 65px; }
+        .slot { width: 55px; height: 65px; background: var(--bg-main); border: 2px dashed var(--border-color); border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; }
+        .slot.filled { border-style: solid; border-color: var(--accent); background: #eff6ff; }
+
+        .symbols-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+        .symbol-btn { aspect-ratio: 1; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; font-size: 2rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
+        .symbol-btn:hover:not(:disabled) { background: #e2e8f0; border-color: var(--accent); transform: translateY(-2px); }
+        .symbol-btn:disabled { opacity: 0.3; cursor: not-allowed; background: #e2e8f0; }
+
+        .control-panel { display: flex; gap: 10px; justify-content: center; }
+        .btn-action { flex: 1; padding: 0.9rem; background: var(--accent); color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; font-size: 0.9rem; transition: 0.2s; letter-spacing: 1px; }
+        .btn-action:hover { background: var(--accent-hover); }
+        .btn-action.secondary { background: var(--text-muted); }
+        .btn-action.secondary:hover { background: var(--text-main); }
+
+        #proceed-btn { display: none; margin-top: 2rem; background: var(--success); color: white; text-decoration: none; text-align: center; padding: 1.2rem; border-radius: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
+        #proceed-btn:hover { background: #059669; }
+
+        .status-msg { margin-top: 1rem; font-family: monospace; font-weight: bold; font-size: 0.95rem; min-height: 25px; }
+        .status-msg.error { color: var(--error); }
+        .status-msg.success { color: var(--success); }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem; margin-top: 2rem; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>FIREWALL 4: BIOMETRIC CLEARANCE</h2>
+        <h2>FIREWALL 4: BIOMETRIC CLEARANCE &amp; NEURAL LINK</h2>
         
-        <p style="text-align: center; margin-bottom: 1rem;">WARNING: Legal Department WIPE PROTOCOL detected. Re-establish executive neural links to halt the deletion.</p>
-        
-        <div class="stats">
-            <div>MATCHES: <span id="matches" style="color: var(--accent);">0</span> / 8</div>
-            <div>MOVES: <span id="moves">0</span></div>
+        <div class="lore-box">
+            <div class="lore-header">CASE FILE EXCERPT: THE UNSEEN SYNCHRONY</div>
+            <p>"Looking closely at the executive travel logs from that evening, two individuals never crossed paths physically, yet their footprints mirror each other down to the second. The strategist mapped out every contingency and schedule parameter in advance, ensuring no guard was stationed where they shouldn't be. Meanwhile, the compliance officer made sure every exception was stamped with absolute, unquestionable finality. They didn't need to speak a word to each other. The system simply obeyed their synchronized timing."</p>
+            <div class="lore-meta">
+                &gt; INVESTIGATION NOTE // INTERNAL AFFAIRS<br>
+                &gt; STATUS: CLASSIFIED ARCHIVE
+            </div>
         </div>
 
-        <div class="memory-game" id="memory-board">
-            <!-- Cards injected via JS -->
-        </div>
+        <div class="puzzle-container">
+            <h3>EXECUTIVE SEQUENCE LOCK</h3>
+            <p>To bypass biometric clearance, select the four procedural tokens in their correct chronological order based on the case file clues: <strong>Strategy Formulation &rarr; Compliance Approval &rarr; Execution &rarr; Clean-up</strong>.</p>
+            
+            <div class="sequence-interface">
+                <div class="selected-slots" id="selected-slots">
+                    <div class="slot">_</div>
+                    <div class="slot">_</div>
+                    <div class="slot">_</div>
+                    <div class="slot">_</div>
+                </div>
 
-        <a id="proceed-btn" class="btn-primary" href="puzzle3.html">BIOMETRICS ACCEPTED. PROCEED TO FINAL NODE.</a>
+                <div class="symbols-grid" id="symbols-grid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="control-panel">
+                    <button class="btn-action secondary" onclick="resetSequence()">RESET</button>
+                    <button class="btn-action" onclick="verifySequence()">VERIFY SEQUENCE</button>
+                </div>
+
+                <div class="status-msg" id="status-msg"></div>
+            </div>
+
+            <a id="proceed-btn" href="puzzle3.html">BIOMETRICS ACCEPTED. PROCEED TO FINAL NODE &rarr;</a>
+        </div>
     </div>
 
+    <footer>
+        <p>Aethelgard Industries © 2026. All rights reserved. | Aegis Protocol Active</p>
+    </footer>
+
     <script>
-        const cardsArray = ['💼', '🗡️', '🍷', '👁️', '⚖️', '🦊', '🍎', '📂'];
-        let gameGrid = cardsArray.concat(cardsArray).sort(() => 0.5 - Math.random());
+        // Correct sequence: Strategy (💼) -> Compliance (⚖️) -> Action (🗡️) -> Clean-up (🍷)
+        const correctSequence = ['💼', '⚖️', '🗡️', '🍷'];
+        let playerSelection = [];
         
-        let firstCard = null;
-        let secondCard = null;
-        let lockBoard = false;
-        let matches = 0;
-        let moves = 0;
+        // Available symbols to choose from
+        const availableSymbols = ['🍷', '🗡️', '💼', '👁️', '⚖️', '🦊', '🍎', '📂'];
 
-        const board = document.getElementById('memory-board');
+        const slotsContainer = document.getElementById('selected-slots');
+        const gridContainer = document.getElementById('symbols-grid');
+        const statusEl = document.getElementById('status-msg');
+        const proceedBtn = document.getElementById('proceed-btn');
 
-        gameGrid.forEach((icon) => {
-            const cardElement = document.createElement('div');
-            cardElement.classList.add('memory-card');
-            cardElement.dataset.icon = icon;
+        function initPuzzle() {
+            playerSelection = [];
+            statusEl.innerText = "";
+            renderSlots();
+            renderGrid();
+        }
 
-            cardElement.innerHTML = `
-                <div class="front-face">${icon}</div>
-                <div class="back-face"></div>
-            `;
-            
-            cardElement.addEventListener('click', flipCard);
-            board.appendChild(cardElement);
-        });
+        function renderSlots() {
+            slotsContainer.innerHTML = '';
+            for (let i = 0; i < 4; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'slot' + (playerSelection[i] ? ' filled' : '');
+                slot.innerText = playerSelection[i] || '_';
+                slotsContainer.appendChild(slot);
+            }
+        }
 
-        function flipCard() {
-            if (lockBoard) return;
-            if (this === firstCard) return;
+        function renderGrid() {
+            gridContainer.innerHTML = '';
+            availableSymbols.forEach((symbol) => {
+                const btn = document.createElement('button');
+                btn.className = 'symbol-btn';
+                btn.innerText = symbol;
+                
+                // Disable if already selected
+                if (playerSelection.includes(symbol) || playerSelection.length >= 4) {
+                    btn.disabled = true;
+                }
+                
+                btn.onclick = () => selectSymbol(symbol);
+                gridContainer.appendChild(btn);
+            });
+        }
 
-            this.classList.add('flip');
+        function selectSymbol(symbol) {
+            if (playerSelection.length < 4) {
+                playerSelection.push(symbol);
+                renderSlots();
+                renderGrid();
+            }
+        }
 
-            if (!firstCard) {
-                firstCard = this;
+        function resetSequence() {
+            initPuzzle();
+        }
+
+        function verifySequence() {
+            if (playerSelection.length < 4) {
+                statusEl.className = 'status-msg error';
+                statusEl.innerText = "INCOMPLETE SEQUENCE. SELECT ALL 4 TOKENS.";
                 return;
             }
 
-            secondCard = this;
-            moves++;
-            document.getElementById('moves').innerText = moves;
-            checkForMatch();
-        }
-
-        function checkForMatch() {
-            let isMatch = firstCard.dataset.icon === secondCard.dataset.icon;
-
-            if (isMatch) {
-                disableCards();
-                matches++;
-                document.getElementById('matches').innerText = matches;
-                if (matches === 8) {
-                    setTimeout(() => {
-                        document.getElementById('proceed-btn').style.display = 'block';
-                    }, 500);
+            let isCorrect = true;
+            for (let i = 0; i < 4; i++) {
+                if (playerSelection[i] !== correctSequence[i]) {
+                    isCorrect = false;
+                    break;
                 }
+            }
+
+            if (isCorrect) {
+                statusEl.className = 'status-msg success';
+                statusEl.innerText = "SEQUENCE VERIFIED. BIOMETRICS ACCEPTED.";
+                proceedBtn.style.display = 'block';
+                document.querySelector('.sequence-interface').style.display = 'none';
             } else {
-                unflipCards();
+                statusEl.className = 'status-msg error';
+                statusEl.innerText = "INCORRECT SEQUENCE. LOCKOUT ENGAGED.";
+                setTimeout(() => {
+                    resetSequence();
+                }, 1500);
             }
         }
 
-        function disableCards() {
-            firstCard.removeEventListener('click', flipCard);
-            secondCard.removeEventListener('click', flipCard);
-            resetBoard();
-        }
-
-        function unflipCards() {
-            lockBoard = true;
-            setTimeout(() => {
-                firstCard.classList.remove('flip');
-                secondCard.classList.remove('flip');
-                resetBoard();
-            }, 1000);
-        }
-
-        function resetBoard() {
-            [firstCard, secondCard, lockBoard] = [null, null, false];
-        }
+        initPuzzle();
     </script>
 </body>
 </html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aethelgard Offshore | Terminal</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Wordle Colors */
+            --wordle-green: #10b981;
+            --wordle-yellow: #f59e0b;
+            --wordle-gray: #94a3b8;
+            --wordle-border: #cbd5e1;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+        
+        .terminal-container { max-width: 600px; width: 100%; background: var(--bg-card); padding: 3rem; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); text-align: center; }
+        
+        h2 { color: var(--accent); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-size: 1.8rem; }
+        .subtitle { color: var(--text-muted); font-size: 1rem; margin-bottom: 2.5rem; }
+
+        /* Game Board */
+        #wordle-board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 8px; max-width: 350px; margin: 0 auto 2.5rem; }
+        .wordle-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .wordle-tile { width: 100%; aspect-ratio: 1; border: 2px solid var(--wordle-border); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; font-weight: bold; text-transform: uppercase; color: var(--text-main); border-radius: 6px; background: #f8fafc; transition: all 0.3s ease; }
+        
+        /* Virtual Keyboard */
+        .virtual-keyboard { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+        .key-row { display: flex; justify-content: center; gap: 8px; }
+        .key { padding: 18px 12px; background: var(--border-color); color: var(--text-main); border: none; border-radius: 6px; cursor: pointer; font-weight: 700; flex: 1; text-align: center; user-select: none; transition: 0.2s; font-size: 1.1rem; }
+        .key:hover { background: #cbd5e1; }
+        .key.wide { flex: 1.5; font-size: 0.9rem; }
+        
+        /* Status Colors */
+        .correct { background-color: var(--wordle-green) !important; border-color: var(--wordle-green) !important; color: white !important; }
+        .present { background-color: var(--wordle-yellow) !important; border-color: var(--wordle-yellow) !important; color: white !important; }
+        .absent { background-color: var(--wordle-gray) !important; border-color: var(--wordle-gray) !important; color: white !important; }
+
+        .error-msg { color: #ef4444; margin-top: 20px; font-weight: bold; font-family: monospace; letter-spacing: 1px; font-size: 1.1rem; min-height: 25px; }
+
+        .btn-next { display: none; width: 100%; padding: 1.2rem; background: var(--wordle-green); color: white; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 6px; transition: background 0.2s; text-transform: uppercase; letter-spacing: 2px; margin-top: 2rem; text-decoration: none; }
+        .btn-next:hover { background: #059669; }
+        
+        .back-link { display: block; margin-top: 2rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        .back-link:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-container">
+        <h2>DECRYPTION PROTOCOL</h2>
+        <p class="subtitle">Extract the 5-letter payload to bypass the firewall.</p>
+        
+        <div id="wordle-board">
+            <div class="wordle-row" id="row-0"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-1"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-2"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-3"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-4"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+            <div class="wordle-row" id="row-5"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+        </div>
+
+        <div class="virtual-keyboard" id="keyboard">
+            <div class="key-row">
+                <button class="key" data-key="Q">Q</button><button class="key" data-key="W">W</button><button class="key" data-key="E">E</button><button class="key" data-key="R">R</button><button class="key" data-key="T">T</button><button class="key" data-key="Y">Y</button><button class="key" data-key="U">U</button><button class="key" data-key="I">I</button><button class="key" data-key="O">O</button><button class="key" data-key="P">P</button>
+            </div>
+            <div class="key-row">
+                <button class="key" data-key="A">A</button><button class="key" data-key="S">S</button><button class="key" data-key="D">D</button><button class="key" data-key="F">F</button><button class="key" data-key="G">G</button><button class="key" data-key="H">H</button><button class="key" data-key="J">J</button><button class="key" data-key="K">K</button><button class="key" data-key="L">L</button>
+            </div>
+            <div class="key-row">
+                <button class="key wide" data-key="ENTER">ENTER</button><button class="key" data-key="Z">Z</button><button class="key" data-key="X">X</button><button class="key" data-key="C">C</button><button class="key" data-key="V">V</button><button class="key" data-key="B">B</button><button class="key" data-key="N">N</button><button class="key" data-key="M">M</button><button class="key wide" data-key="BACKSPACE">DEL</button>
+            </div>
+        </div>
+
+        <div id="wordle-error" class="error-msg"></div>
+        
+        <a href="puzzle1.html" id="btn-next" class="btn-next">PROCEED TO PUZZLE 1 &rarr;</a>
+        
+        <a href="index.html" class="back-link">&larr; Abort Connection</a>
+    </div>
+
+     <script>
+        // 50 Corporate/Mystery Themed 5-Letter Words
+        const WORD_LIST = [
+            "FRAUD", "AUDIT", "POWER", "BOARD", "GREED", "DEATH", "VIPER", "KNIFE", "NIGHT",
+            "ALARM", "CRIME", "GUILT", "MONEY", "PANIC", "WATCH", "CLOCK", "TRUST", "ORDER", "CHAOS",
+            "BLAME", "GHOST", "VENOM", "AEGIS", "TRUTH", "LYING", "CHEAT", "STEAL", "PROBE", "JUDGE",
+            "SMOKE", "GLASS", "CRASH", "FATAL", "SMART", "LOGIC", "CODES", "FILES", "VAULT", "LOCKS",
+            "GATES", "TRACK", "TRAIL", "PROOF", "STAMP", "FORCE", "PUPIL", "AGENT", "SHIFT", "STRIKE",
+            "CLUES","DOUBT", "DOUBT", "CHOKE", "NOOSE", "ENEMY", "HEIRS", "FIEND", "AUDIO", "PIANO", "Tango",
+            "THEME","ANGEL", "BRAIN", "BREAD", "BRICK", "DREAM", "FLAME", "DANCE", "CROWN", "DEPTH", "BRAVE", 
+            "CLEAN", "ENTER", "DRINK", "GHOST","FROST", "GLOBE", "GRACE", "FRESH", "DRAFT", "DRIVE", "CHASE", "CLOUD",
+        ];
+      
+        
+        // Pick a random word for this session
+        let TARGET_WORD = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
+        
+        const maxGuesses = 6;
+        let currentGuess = "";
+        let currentRow = 0;
+        let gameOver = false;
+
+        // Virtual Keyboard Support
+        document.querySelectorAll('.key').forEach(button => {
+            button.addEventListener('click', () => {
+                const key = button.getAttribute('data-key');
+                handleKey(key);
+            });
+        });
+
+        // Physical Keyboard Support
+        document.addEventListener("keydown", (e) => {
+            if (gameOver) return;
+            let key = e.key.toUpperCase();
+            if (key === "ENTER" || key === "BACKSPACE" || /^[A-Z]$/.test(key)) {
+                handleKey(key);
+            }
+        });
+
+        function handleKey(key) {
+            if (gameOver) return;
+
+            if (key === "BACKSPACE" && currentGuess.length > 0) {
+                currentGuess = currentGuess.slice(0, -1);
+                updateGrid();
+            } else if (key === "ENTER") {
+                if (currentGuess.length === 5) {
+                    checkGuess();
+                } else {
+                    showError("NOT ENOUGH LETTERS");
+                }
+            } else if (currentGuess.length < 5 && /^[A-Z]$/.test(key) && key.length === 1) {
+                currentGuess += key;
+                updateGrid();
+            }
+        }
+
+        function updateGrid() {
+            const row = document.getElementById(`row-${currentRow}`);
+            const tiles = row.querySelectorAll('.wordle-tile');
+            for (let i = 0; i < 5; i++) {
+                tiles[i].innerText = currentGuess[i] || "";
+            }
+        }
+
+        function showError(msg) {
+            const err = document.getElementById('wordle-error');
+            err.innerText = msg;
+            setTimeout(() => err.innerText = '', 2000);
+        }
+
+        function checkGuess() {
+            const row = document.getElementById(`row-${currentRow}`);
+            const tiles = row.querySelectorAll('.wordle-tile');
+            
+            let guessArr = currentGuess.split("");
+            let targetArr = TARGET_WORD.split("");
+            let tileColors = Array(5).fill("absent"); 
+            
+            // First pass: Find exact matches (Green)
+            for (let i = 0; i < 5; i++) {
+                if (guessArr[i] === targetArr[i]) {
+                    tileColors[i] = "correct";
+                    targetArr[i] = null; 
+                    guessArr[i] = null;  
+                }
+            }
+            
+            // Second pass: Find misplaced matches (Yellow)
+            for (let i = 0; i < 5; i++) {
+                if (guessArr[i] !== null) {
+                    let matchIndex = targetArr.indexOf(guessArr[i]);
+                    if (matchIndex !== -1) {
+                        tileColors[i] = "present";
+                        targetArr[matchIndex] = null; 
+                    }
+                }
+            }
+
+            // Apply colors to grid and keyboard
+            for (let i = 0; i < 5; i++) {
+                tiles[i].classList.add(tileColors[i]);
+                updateKeyboardColor(currentGuess[i], tileColors[i]);
+            }
+
+            if (currentGuess === TARGET_WORD) {
+                gameOver = true;
+                document.getElementById('wordle-error').innerText = "FIREWALL BYPASSED.";
+                document.getElementById('wordle-error').style.color = "var(--wordle-green)";
+                setTimeout(() => {
+                    document.getElementById('btn-next').style.display = 'block';
+                }, 800);
+            } else {
+                currentRow++;
+                currentGuess = "";
+                if (currentRow === maxGuesses) {
+                    gameOver = true;
+                    document.getElementById('wordle-error').innerText = `SYSTEM LOCKED. WORD WAS: ${TARGET_WORD}.`;
+                }
+            }
+        }
+
+        function updateKeyboardColor(letter, colorClass) {
+            const keyBtn = document.querySelector(`.key[data-key="${letter}"]`);
+            if (!keyBtn) return;
+            
+            if (keyBtn.classList.contains('correct')) return;
+            if (keyBtn.classList.contains('present') && colorClass === 'absent') return;
+            
+            keyBtn.classList.remove('absent', 'present', 'correct');
+            keyBtn.classList.add(colorClass);
+        }
+    </script>
+</body>
+</html>

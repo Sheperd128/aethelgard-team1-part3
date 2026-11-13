@@ -5,74 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aethelgard Offshore | Intercepted Log</title>
     <style>
-        :root { --bg: #020817; --card: #0f172a; --accent: #10b981; --text: #f8fafc; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+        :root {
+            /* Brighter Corporate Theme (Matching Website 3) */
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --accent: #2563eb;       /* Corporate Blue */
+            --accent-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --error: #ef4444;
+
+            /* Intercepted Log Colors (Terminal Aesthetic for contrast) */
+            --log-bg: #020817;
+            --log-border: #1e293b;
+            --speaker-a: #a855f7;    /* Purple */
+            --speaker-b: #38bdf8;    /* Blue */
+            --log-text: #e2e8f0;
+        }
         
-        .container { max-width: 800px; width: 100%; }
-        h2 { color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; align-items: center; padding: 3rem 1rem; min-height: 100vh; }
         
-        .transcript { background: #000; padding: 1.5rem; border: 1px solid #334155; border-radius: 4px; margin-bottom: 2rem; }
-        .log-header { color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem; }
-        .speaker-a { color: #a855f7; margin-bottom: 1rem; } /* Purple for Aizen */
-        .speaker-b { color: #eab308; margin-bottom: 1rem; } /* Yellow for Naruto */
+        .container { max-width: 900px; width: 100%; background: var(--bg-card); padding: 3.5rem; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
         
-        .pin-pad { background: var(--card); padding: 2rem; border-radius: 4px; text-align: center; border: 1px solid var(--accent); }
-        .pin-pad input { background: #000; color: var(--accent); border: 1px solid var(--accent); padding: 1rem; font-size: 1.5rem; text-align: center; letter-spacing: 5px; margin-bottom: 1rem; width: 200px; }
-        .pin-pad input:focus { outline: none; box-shadow: 0 0 10px var(--accent); }
-        .pin-pad button { padding: 1rem 2rem; background: var(--accent); color: black; border: none; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
-        .pin-pad button:hover { background: #059669; }
-        .error { color: #ef4444; margin-top: 10px; display: none; font-weight: bold; }
+        /* Headers */
+        .header-box { text-align: center; margin-bottom: 2.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 1.5rem; }
+        h1 { color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-size: 2rem; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* The Transcript Box */
+        .transcript-container { background: var(--log-bg); padding: 2.5rem; border: 1px solid var(--log-border); border-radius: 6px; margin-bottom: 2.5rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        
+        .log-header { color: #64748b; font-size: 0.95rem; margin-bottom: 2rem; font-family: 'Courier New', Courier, monospace; border-bottom: 1px dashed #334155; padding-bottom: 1rem; line-height: 1.8; }
+        .log-header strong { color: #ef4444; }
+        
+        .dialogue-line { margin-bottom: 1.5rem; font-family: 'Courier New', Courier, monospace; font-size: 1.05rem; line-height: 1.7; color: var(--log-text); }
+        .dialogue-line:last-child { margin-bottom: 0; }
+        
+        .speaker-a strong { color: var(--speaker-a); }
+        .speaker-b strong { color: var(--speaker-b); }
+        
+        /* Hint Box */
+        .hint-box { background: #eff6ff; border-left: 4px solid var(--accent); padding: 1.5rem; margin-bottom: 2.5rem; border-radius: 0 6px 6px 0; }
+        .hint-box h4 { color: var(--accent); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
+        .hint-box p { color: var(--text-main); font-size: 0.95rem; text-align: justify; }
+
+        /* PIN Pad Interface */
+        .pin-pad { background: #f8fafc; padding: 2.5rem; border-radius: 6px; text-align: center; border: 1px solid var(--border-color); }
+        .pin-pad h3 { margin-bottom: 1.5rem; color: var(--text-main); font-size: 1.3rem; letter-spacing: 1px; text-transform: uppercase; }
+        
+        .input-wrapper { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+        .pin-input { background: #ffffff; color: var(--accent); border: 2px solid var(--border-color); padding: 1.2rem; font-size: 2rem; text-align: center; letter-spacing: 12px; border-radius: 6px; width: 100%; max-width: 300px; font-family: monospace; outline: none; transition: border-color 0.3s, box-shadow 0.3s; }
+        .pin-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        .btn-primary { width: 100%; max-width: 300px; padding: 1.2rem; background: var(--accent); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 1.1rem; border-radius: 4px; transition: background 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        
+        .error-msg { color: var(--error); margin-top: 15px; display: none; font-weight: bold; font-family: monospace; font-size: 1rem; letter-spacing: 1px; }
+        
+        /* Footer */
+        footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem; margin-top: 2rem; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>DECRYPTED FILE: AUDIO_INTERCEPT_77</h2>
         
-        <div class="transcript">
+        <div class="header-box">
+            <h1>Aethelgard Threat Management</h1>
+            <div class="subtitle">Secure Audio Payload Extraction</div>
+        </div>
+        
+        <div class="transcript-container">
             <div class="log-header">
                 DATE: [REDACTED]<br>
+                SOURCE: LOCALIZED GRID BUFFER<br>
                 ENCRYPTION: LEVEL 9<br>
-                NOTE: Voice modulation detected. True identities unknown.
+                <strong>[SYSTEM NOTE]:</strong> Voice modulation detected. True identities obscured. Semantic analysis indicates one senior architect and one junior operative are speaking. Buffer logs indicate a third, unknown entity actively recorded this feed.
             </div>
             
-            <div class="speaker-a">
-                <strong>[UNKNOWN_ALPHA]:</strong> The board is set. Have you acquired the leverage on the HR Director?
+            <div class="dialogue-line speaker-a">
+                <strong>[UNKNOWN_ALPHA]:</strong> Is the Sierra grid offline? I need the Echo firewall bypassed and the Victor cameras looped before the Echo team arrives. We need a clean November.
             </div>
-            <div class="speaker-b">
-                <strong>[UNKNOWN_BETA]:</strong> Yeah, I got the drive. But I don't like this. People are gonna get hurt. The chefs have nothing to do with Richard's crimes!
+            
+            <div class="dialogue-line speaker-b">
+                <strong>[UNKNOWN_BETA]:</strong> It's done. But the Tango relay is logging the power draw. If the Hotel staff notices the outage, the Romeo protocol will fail. I'm taking a massive Echo risk here. If they find the Echo logs, I take the fall.
             </div>
-            <div class="speaker-a">
-                <strong>[UNKNOWN_ALPHA]:</strong> Sacrifice is the currency of peace. If Richard liquidates the foundation, thousands of your people will starve. You are the only one who can carry this burden. You are... the hero they need. Do exactly as I say. The <strong>four</strong>th sector is clear. Strike at <strong>zero</strong> hour. Take the <strong>two</strong> drives. Leave <strong>eight</strong> guards alive so they can testify against him.
+            
+            <div class="dialogue-line speaker-a">
+                <strong>[UNKNOWN_ALPHA]:</strong> They won't. Focus on the Foxtrot node. Once the Oscar team moves into the suite, you initiate the Uniform blackout. Do you copy, Romeo?
             </div>
-            <div class="speaker-b">
-                <strong>[UNKNOWN_BETA]:</strong> Fine. I'll make them poison the drink. But after this, I'm taking over the charity. Believe that.
-            </div>
-            <div class="speaker-a">
-                <strong>[UNKNOWN_ALPHA]:</strong> ...Of course you will. I am entirely at your service.
+            
+            <div class="dialogue-line speaker-b">
+                <strong>[UNKNOWN_BETA]:</strong> I copy. But when this is over, I'm taking the Oscar division. No more November operations in the dark. I want the Echo clearance.
             </div>
         </div>
 
         <div class="pin-pad">
-            <h3 style="margin-bottom: 1rem; color: var(--accent);">ENTER AUDIO EXTRACTION PIN</h3>
-            <input type="text" id="audio-pin" maxlength="4" autocomplete="off">
-            <br>
-            <button onclick="checkPin()">UNLOCK GAUNTLET</button>
-            <div class="error" id="pin-error">ACCESS DENIED. INVALID EXTRACTION.</div>
+            <h3>ENTER AUDIO EXTRACTION PIN</h3>
+            <div class="input-wrapper">
+                <input type="text" id="audio-pin" class="pin-input" maxlength="4" autocomplete="off" spellcheck="false" placeholder="----">
+            </div>
+            <button class="btn-primary" onclick="checkPin()">DECRYPT PAYLOAD</button>
+            <div class="error-msg" id="pin-error">ACCESS DENIED. INVALID EXTRACTION.</div>
         </div>
+
     </div>
+
+    <footer>
+        <p>Aethelgard Industries © 2026. All rights reserved. | Aegis Protocol Active</p>
+    </footer>
 
     <script>
         function checkPin() {
-            const pin = document.getElementById('audio-pin').value;
-            if(pin === "4028") {
+            const pin = document.getElementById('audio-pin').value.trim();
+            const errorMsg = document.getElementById('pin-error');
+            
+            /* 
+               The PIN is 7341.
+               It is hidden using the NATO Phonetic Alphabet spelling out the numbers.
+               Block 1 (Alpha): Sierra, Echo, Victor, Echo, November -> S-E-V-E-N (7)
+               Block 2 (Beta): Tango, Hotel, Romeo, Echo, Echo -> T-H-R-E-E (3)
+               Block 3 (Alpha): Foxtrot, Oscar, Uniform, Romeo -> F-O-U-R (4)
+               Block 4 (Beta): Oscar, November, Echo -> O-N-E (1)
+            */
+            if(pin === "7341") {
+                // Redirect to the next puzzle
                 window.location.href = "game2.html";
             } else {
-                document.getElementById('pin-error').style.display = 'block';
-                setTimeout(() => document.getElementById('pin-error').style.display = 'none', 2000);
+                errorMsg.style.display = 'block';
+                setTimeout(() => errorMsg.style.display = 'none', 2000);
+                document.getElementById('audio-pin').value = '';
             }
         }
+        
+        // Allow pressing Enter in the input field to submit
+        document.getElementById("audio-pin").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkPin();
+            }
+        });
     </script>
 </body>
 </html>

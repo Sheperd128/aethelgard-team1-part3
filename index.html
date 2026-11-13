@@ -6,192 +6,125 @@
     <title>Aethelgard Offshore | Secure Node</title>
     <style>
         :root {
-            --bg-main: #020817;
-            --bg-card: #0f172a;
-            --accent: #10b981; /* Emerald hacker green */
-            --accent-dim: #064e3b;
-            --text-main: #f8fafc;
-            --wordle-green: #10b981;
-            --wordle-yellow: #eab308;
-            --wordle-gray: #334155;
+            /* Brighter Corporate Theme */
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --accent: #2563eb;       /* Corporate Blue */
+            --accent-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --error: #ef4444;
+            --log-bg: #020817;
         }
         
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
-        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.7; display: flex; flex-direction: column; align-items: center; padding: 3rem 1rem; min-height: 100vh; }
         
-        /* Containers */
-        .view-section { display: none; padding: 2rem; max-width: 800px; margin: 0 auto; animation: fadeIn 0.5s; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* The Homepage EULA */
-        #homepage { border: 1px solid var(--accent); margin-top: 2rem; background: #000; padding: 2rem; border-radius: 4px; height: 80vh; overflow-y: scroll; }
-        #homepage h1 { color: var(--accent); text-align: center; border-bottom: 1px solid var(--accent); padding-bottom: 1rem; margin-bottom: 1rem; }
-        #homepage p { margin-bottom: 1.5rem; font-size: 0.9rem; color: #94a3b8; }
-        .secret-link { color: #94a3b8; text-decoration: none; cursor: pointer; transition: 0.3s; }
-        .secret-link:hover { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
-
-        /* Game 1: Wordle */
-        .game-header { text-align: center; margin-bottom: 2rem; color: var(--accent); }
-        #wordle-board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 5px; max-width: 300px; margin: 0 auto 2rem; }
-        .wordle-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .wordle-tile { width: 100%; aspect-ratio: 1; border: 2px solid var(--accent-dim); display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; text-transform: uppercase; }
+        .container { max-width: 900px; width: 100%; background: var(--bg-card); padding: 4rem; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); position: relative; }
         
-        .virtual-keyboard { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 5px; }
-        .key-row { display: flex; justify-content: center; gap: 5px; }
-        .key { padding: 15px 10px; background: var(--bg-card); color: white; border: 1px solid var(--accent-dim); border-radius: 4px; cursor: pointer; font-weight: bold; flex: 1; text-align: center; user-select: none; }
-        .key:hover { background: var(--accent-dim); }
-        .key.wide { flex: 1.5; }
-        
-        /* Status Colors */
-        .correct { background-color: var(--wordle-green) !important; border-color: var(--wordle-green) !important; color: black; }
-        .present { background-color: var(--wordle-yellow) !important; border-color: var(--wordle-yellow) !important; color: black; }
-        .absent { background-color: var(--wordle-gray) !important; border-color: var(--wordle-gray) !important; }
+        h1 { color: var(--accent); border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center; font-size: 2.2rem; }
+        h2 { color: var(--text-main); font-size: 1.3rem; margin-top: 2rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        .next-btn { display: none; width: 100%; padding: 1rem; background: var(--accent); color: black; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 2rem; border-radius: 4px; }
-        .next-btn:hover { background: #059669; }
+        /* General UI Elements */
+        .btn-primary { display: block; width: 100%; padding: 1.2rem; background: var(--accent); color: white; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 4px; transition: background 0.2s; text-transform: uppercase; letter-spacing: 2px; margin-top: 3rem; text-align: center; text-decoration: none; }
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        /* Homepage EULA */
+        p { margin-bottom: 1.5rem; font-size: 1.05rem; color: var(--text-muted); text-align: justify; }
+        strong { color: var(--text-main); font-weight: 700; }
+        .secret-trigger { color: inherit; text-decoration: none; border-bottom: 1px dashed var(--text-muted); cursor: pointer; transition: 0.3s; }
+        .secret-trigger:hover { color: var(--error); border-color: var(--error); }
+
+        /* Secret Lore Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
+        .modal-content { background: var(--bg-card); padding: 3rem; border-radius: 8px; text-align: center; max-width: 550px; width: 100%; border: 1px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-content h3 { color: var(--error); margin-bottom: 1.5rem; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        .input-field { width: 100%; padding: 1rem; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); text-align: center; font-size: 1.2rem; letter-spacing: 3px; border-radius: 4px; margin-bottom: 1.5rem; text-transform: uppercase; outline: none; font-family: monospace; }
+        .input-field:focus { border-color: var(--accent); }
+        
+        .btn-close { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); margin-top: 1rem; }
+        .btn-close:hover { background: var(--bg-main); color: var(--text-main); }
+        .error-msg { color: var(--error); margin-top: 10px; display: none; font-weight: bold; text-align: center; font-family: monospace; }
+        
+        /* Secret Lore Drop Content */
+        .secret-log { text-align: left; background: var(--log-bg); padding: 2rem; border-radius: 6px; border-left: 4px solid var(--error); margin-top: 1rem; color: #cbd5e1; font-family: monospace; font-size: 0.95rem; line-height: 1.8; }
+        .secret-log strong { color: white; }
     </style>
 </head>
 <body>
 
-    <!-- HOMEPAGE: The Hidden Link -->
-    <div id="homepage" class="view-section active">
-        <h1>AETHELGARD OFFSHORE SERVER EULA</h1>
-        <p><strong>SECTION 1: TERMS OF ACCESS</strong><br>Access to this server is strictly restricted to Aethelgard Industries Level 5 Executive personnel. Unauthorized access attempts will be logged and reported to the global authorities. By continuing to scroll, you acknowledge that your IP address, MAC address, and physical geolocation are currently being monitored.</p>
+    <div class="container">
+        <h1>AETHELGARD OFFSHORE NODE</h1>
         
-        <p><strong>SECTION 2: DATA ENCRYPTION AND LIABILITY</strong><br>All files contained within this offshore node are protected under the Aegis Protocol. Aethelgard Industries assumes no liability for neurological damage, psychological distress, or financial ruin incurred by unauthorized decryption attempts. The data is final. The truth is absolute.</p>
+        <h2>Section 1: Terms of Access</h2>
+        <p>Access to this server is strictly restricted to Aethelgard Industries Level 5 Executive personnel. Unauthorized access attempts will be logged and reported to global corporate authorities. By scrolling further, you acknowledge that your digital footprint, physical geolocation, and ISP data are currently being monitored by Aegis Protocol v.5.9.1.4.</p>
         
-        <p><strong>SECTION 3: THE CONSEQUENCES OF CURIOSITY</strong><br>There is a reason the CEO hid these files in the dark. Some ledgers should not be balanced. Some doors should remain locked. You are currently trespassing in the digital graveyard of Aethelgard's enemies.</p>
+        <h2>Section 2: Server Architecture & Isolation</h2>
+        <p>The late CEO, Richard Aethelgard, ordered this specific server node severed from the primary Alpine Estate Grid three months prior to his passing. He theorized that if a hostile corporate takeover occurred, standard internal communications could be manipulated or throttled by senior management. This offshore node acts as a pristine, unalterable digital mirror.</p>
+        <p>To ensure absolute neutrality, no executive director was granted administrative access to this hardware. Maintenance of the queue buffers and firewall integrity was delegated exclusively to the junior IT staff. The system operates on absolute data logic.</p>
+        
+        <h2>Section 3: Data Encryption and Liability</h2>
+        <p>All files contained within this offshore node are highly classified and represent the final failsafe of the Aethelgard empire. The corporation assumes no liability for legal repercussions, psychological distress, or financial ruin incurred by unauthorized decryption attempts. The data recorded here is final. The truth is absolute.</p>
+        
+        <h2>Section 4: The Consequences of Curiosity</h2>
+        <p>There is a reason the CEO hid these files in the dark. Some ledgers should not be <span class="secret-trigger" onclick="openSecretModal()">balanced</span>. Some doors should remain permanently locked. By attempting to crack the terminal firewall, you are actively trespassing in the digital graveyard of Aethelgard's corporate enemies.</p>
 
-        <p><strong>SECTION 4: ACKNOWLEDGMENT</strong><br>To acknowledge these terms, you must <span class="secret-link" onclick="loadStage('game1')">Proceed</span> with absolute caution. Failure to adhere to the aforementioned security protocols will result in immediate termination of the connection and dispatch of physical security teams to your location.</p>
+        <h2>Section 5: Arbitration & Acknowledgment</h2>
+        <p>Any disputes arising from the access of this data will be settled in private arbitration outside of federal jurisdiction. Aethelgard retains the right to employ extreme prejudice in the defense of its logistical assets. To acknowledge these terms, you must initiate the decryption phase below. Failure to adhere to security protocols will result in immediate termination of the connection.</p>
         
-        <p><strong>SECTION 5: ARBITRATION</strong><br>Any disputes arising from the access of this data will be settled in private arbitration outside of federal jurisdiction. Aethelgard retains the right to employ extreme prejudice in the defense of its corporate secrets.</p>
-        <p><br><br><br>EOF.</p>
+        <!-- Links to the Wordle Page -->
+        <a href="wordle.html" class="btn-primary">ACCEPT TERMS & INITIATE INFILTRATION</a>
     </div>
 
-    <!-- GAME 1: TERMINAL WORDLE -->
-    <div id="game1" class="view-section">
-        <div class="game-header">
-            <h2>DECRYPTION PROTOCOL 1: INFILTRATION</h2>
-            <p style="font-size: 0.9rem; color: #94a3b8;">Guess the 5-letter secure payload to unlock the next layer. You have 6 attempts.</p>
-        </div>
-        
-        <div id="wordle-board">
-            <!-- 6 Rows, 5 Columns -->
-            <div class="wordle-row" id="row-0"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
-            <div class="wordle-row" id="row-1"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
-            <div class="wordle-row" id="row-2"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
-            <div class="wordle-row" id="row-3"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
-            <div class="wordle-row" id="row-4"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
-            <div class="wordle-row" id="row-5"><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div><div class="wordle-tile"></div></div>
+    <!-- SECRET LORE MODAL (Caesar Cipher for Arlert) -->
+    <div id="secret-modal" class="modal">
+        <div class="modal-content" id="secret-puzzle-view">
+            <h3>RESTRICTED ARCHIVE</h3>
+            <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 2rem;">To access the buried logs, decrypt the network administrator's designation. <br><br><strong style="color: var(--text-main);">Cipher:</strong> Shift backward by 3 letters in the alphabet. <br><strong style="color: var(--text-main);">Target:</strong> D U O H U W</p>
+            <input type="text" id="secret-input" class="input-field" placeholder="ENTER SURNAME" autocomplete="off" spellcheck="false">
+            <button class="btn-primary" style="background: var(--error); margin-top: 0;" onclick="checkSecret()">DECRYPT LOG</button>
+            <button class="btn-primary btn-close" onclick="closeSecretModal()">CANCEL</button>
+            <p id="secret-error" class="error-msg">ACCESS DENIED. INVALID DECRYPTION.</p>
         </div>
 
-        <div class="virtual-keyboard" id="keyboard">
-            <div class="key-row">
-                <div class="key" onclick="handleKey('Q')">Q</div><div class="key" onclick="handleKey('W')">W</div><div class="key" onclick="handleKey('E')">E</div><div class="key" onclick="handleKey('R')">R</div><div class="key" onclick="handleKey('T')">T</div><div class="key" onclick="handleKey('Y')">Y</div><div class="key" onclick="handleKey('U')">U</div><div class="key" onclick="handleKey('I')">I</div><div class="key" onclick="handleKey('O')">O</div><div class="key" onclick="handleKey('P')">P</div>
+        <div class="modal-content" id="secret-lore-view" style="display: none; max-width: 700px;">
+            <h3>NETWORK ADMIN LOG RECOVERED</h3>
+            <div class="secret-log">
+                <strong>[SYSTEM]:</strong> ROOT ACCESS GRANTED TO A. ARLERT.<br>
+                <strong>[SYSTEM]:</strong> INITIATING QUEUE THROTTLE ON COMPLIANCE INBOX.<br><br>
+                <strong>[A. ARLERT]:</strong> Script executed successfully. Aizen thinks he's brilliant for manipulating the schedules, but he doesn't control the flow of data. I do. <br><br>
+                <strong>[A. ARLERT]:</strong> I am holding the requests from Tengen, Gojo, and Makima in the server buffer. Nanami will receive absolutely nothing until 16:58. I know Nanami. I know he refuses to work one single second past 17:00. <br><br>
+                <strong>[A. ARLERT]:</strong> When those requests hit his desk all at once, he won't read them. He will mass-approve them just to go home. He will sign Richard's death warrant, and Aizen will think he engineered it. They are all playing checkers while I rewrite the board.
             </div>
-            <div class="key-row">
-                <div class="key" onclick="handleKey('A')">A</div><div class="key" onclick="handleKey('S')">S</div><div class="key" onclick="handleKey('D')">D</div><div class="key" onclick="handleKey('F')">F</div><div class="key" onclick="handleKey('G')">G</div><div class="key" onclick="handleKey('H')">H</div><div class="key" onclick="handleKey('J')">J</div><div class="key" onclick="handleKey('K')">K</div><div class="key" onclick="handleKey('L')">L</div>
-            </div>
-            <div class="key-row">
-                <div class="key wide" onclick="handleKey('ENTER')">ENTER</div><div class="key" onclick="handleKey('Z')">Z</div><div class="key" onclick="handleKey('X')">X</div><div class="key" onclick="handleKey('C')">C</div><div class="key" onclick="handleKey('V')">V</div><div class="key" onclick="handleKey('B')">B</div><div class="key" onclick="handleKey('N')">N</div><div class="key" onclick="handleKey('M')">M</div><div class="key wide" onclick="handleKey('BACKSPACE')">DEL</div>
-            </div>
+            <button class="btn-primary btn-close" onclick="closeSecretModal()">CLOSE ARCHIVE</button>
         </div>
-
-        <button id="btn-to-puzzle1" class="next-btn" onclick="loadStage('puzzle1')">PROCEED TO PUZZLE 1</button>
-    </div>
-
-    <!-- PUZZLE 1 CONTAINER (For next batch) -->
-    <div id="puzzle1" class="view-section">
-        <h2 style="color: var(--accent); text-align: center;">PUZZLE 1: INITIALIZING...</h2>
     </div>
 
     <script>
-        // --- NAVIGATION LOGIC ---
-        function loadStage(stageId) {
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(stageId).classList.add('active');
+        // --- SECRET LORE LOGIC ---
+        function openSecretModal() {
+            document.getElementById('secret-modal').style.display = 'flex';
+            document.getElementById('secret-puzzle-view').style.display = 'block';
+            document.getElementById('secret-lore-view').style.display = 'none';
+            document.getElementById('secret-input').value = '';
+            document.getElementById('secret-error').style.display = 'none';
+        }
+        
+        function closeSecretModal() {
+            document.getElementById('secret-modal').style.display = 'none';
         }
 
-        // --- GAME 1: WORDLE LOGIC ---
-        const TARGET_WORD = "TOXIN";
-        const maxGuesses = 6;
-        let currentGuess = "";
-        let currentRow = 0;
-        let gameOver = false;
-
-        // Physical Keyboard Support
-        document.addEventListener("keydown", (e) => {
-            if (gameOver || document.getElementById('game1').classList.contains('active') === false) return;
-            let key = e.key.toUpperCase();
-            if (key === "ENTER" || key === "BACKSPACE" || /^[A-Z]$/.test(key)) {
-                handleKey(key);
-            }
-        });
-
-        function handleKey(key) {
-            if (gameOver) return;
-
-            if (key === "BACKSPACE" && currentGuess.length > 0) {
-                currentGuess = currentGuess.slice(0, -1);
-                updateGrid();
-            } else if (key === "ENTER" && currentGuess.length === 5) {
-                checkGuess();
-            } else if (currentGuess.length < 5 && /^[A-Z]$/.test(key) && key.length === 1) {
-                currentGuess += key;
-                updateGrid();
-            }
-        }
-
-        function updateGrid() {
-            const row = document.getElementById(`row-${currentRow}`);
-            const tiles = row.querySelectorAll('.wordle-tile');
-            for (let i = 0; i < 5; i++) {
-                tiles[i].innerText = currentGuess[i] || "";
-            }
-        }
-
-        function checkGuess() {
-            const row = document.getElementById(`row-${currentRow}`);
-            const tiles = row.querySelectorAll('.wordle-tile');
-            let guessArr = currentGuess.split("");
-            let targetArr = TARGET_WORD.split("");
-            
-            // First pass: Find correct letters (Green)
-            for (let i = 0; i < 5; i++) {
-                if (guessArr[i] === targetArr[i]) {
-                    tiles[i].classList.add("correct");
-                    targetArr[i] = null; // Mark as used
-                    guessArr[i] = null;
-                }
-            }
-            
-            // Second pass: Find present letters (Yellow) or absent (Gray)
-            for (let i = 0; i < 5; i++) {
-                if (guessArr[i] !== null) {
-                    let index = targetArr.indexOf(guessArr[i]);
-                    if (index !== -1) {
-                        tiles[i].classList.add("present");
-                        targetArr[index] = null; // Mark as used
-                    } else {
-                        tiles[i].classList.add("absent");
-                    }
-                }
-            }
-
-            if (currentGuess === TARGET_WORD) {
-                gameOver = true;
-                // Replace the old setTimeout in index.html with this:
-setTimeout(() => {
-    window.location.href = "puzzle1.html"; 
-}, 1500);
+        function checkSecret() {
+            const input = document.getElementById('secret-input').value.toUpperCase().trim();
+            // ARLERT shifted forward by 3 is DUOHUW. Shift backward by 3 gets ARLERT.
+            if (input === 'ARLERT') {
+                document.getElementById('secret-puzzle-view').style.display = 'none';
+                document.getElementById('secret-lore-view').style.display = 'block';
             } else {
-                currentRow++;
-                currentGuess = "";
-                if (currentRow === maxGuesses) {
-                    gameOver = true;
-                    alert("ACCESS DENIED. REFRESH TO RESTART TERMINAL.");
-                }
+                const error = document.getElementById('secret-error');
+                error.style.display = 'block';
+                setTimeout(() => error.style.display = 'none', 1500);
             }
         }
     </script>
